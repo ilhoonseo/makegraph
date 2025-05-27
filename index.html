@@ -154,6 +154,7 @@
 
 <script>
   const ctx = document.getElementById('myChart').getContext('2d');
+
   let myChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -162,7 +163,7 @@
         data: [],
         borderWidth: 1,
         backgroundColor: 'rgba(144, 202, 249, 0.6)',
-        borderColor: 'rgba(66, 165, 245, 1)',
+        borderColor: 'rgba(66, 165, 245, 1)'
       }]
     },
     options: {
@@ -180,16 +181,18 @@
       scales: {
         y: {
           beginAtZero: true,
-          min: 0,
-          max: 10, // 초기 기본값, updateChart에서 동적으로 바뀜
           ticks: {
             stepSize: 1,
-            precision: 0
+            precision: 0,
+            callback: function (value) {
+              return Number.isInteger(value) ? value : '';
+            }
           }
         }
       }
     }
   });
+</script>
 
   function addRow() {
     const table = document.getElementById('dataTable');
