@@ -70,17 +70,17 @@
       margin-bottom: 20px;
     }
 
-.button-group button {
-  flex: 1;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
+    .button-group button {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      min-width: 140px;
+      white-space: nowrap;
+    }
 
-  min-width: 140px;       /* ✅ 버튼 최소 너비 확보 */
-  white-space: nowrap;    /* ✅ 버튼 내부 줄바꿈 방지 */
-}
     .button-group button:nth-child(1) {
       background-color: #d5e8ff;
     }
@@ -93,27 +93,27 @@
       background-color: #ffe4c9;
     }
 
-    .button-group button:hover {
-      opacity: 0.9;
+    .delete-button {
+      background-color: #ff6666;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      min-width: 50px;
     }
-
-.delete-button {
-  background-color: #ff6666;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-size: 14px;
-  cursor: pointer;
-
-  white-space: nowrap;     /* ✅ 줄바꿈 방지 */
-  min-width: 50px;          /* ✅ 버튼 최소 너비 확보 */
-}
 
     @media (max-width: 600px) {
       .button-group button {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .delete-button {
         font-size: 13px;
-         padding: 6px 10px;
+        padding: 6px 10px;
       }
     }
   </style>
@@ -151,101 +151,98 @@
   <canvas id="myChart"></canvas>
 
   <script>
-  const ctx = document.getElementById('myChart').getContext('2d');
-
-let myChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: [],
-    datasets: [{
-      // label 제거됨
-      data: [],
-      borderWidth: 1,
-      backgroundColor: 'rgba(144, 202, 249, 0.6)',
-      borderColor: 'rgba(66, 165, 245, 1)',
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      title: {
-        display: true,
-        text: '그래프 제목',
-        font: { size: 20 }
+    const ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+          borderWidth: 1,
+          backgroundColor: 'rgba(144, 202, 249, 0.6)',
+          borderColor: 'rgba(66, 165, 245, 1)',
+        }]
       },
-      legend: {
-        display: false // ✅ 범례도 안 보이게 처리
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 1 }
-      }
-    }
-  }
-});
-
-
-
-  function addRow() {
-    const table = document.getElementById('dataTable');
-    const row = table.insertRow();
-    row.innerHTML = `
-      <td><input type="text" placeholder="항목 이름" /></td>
-      <td><input type="number" /></td>
-      <td><button class="delete-button" onclick="deleteRow(this)">삭제</button></td>
-    `;
-  }
-
-  function deleteRow(button) {
-    const row = button.parentElement.parentElement;
-    row.remove();
-  }
-
-  function updateChart() {
-    const rows = document.querySelectorAll('#dataTable tr');
-    const labels = [];
-    const data = [];
-
-    rows.forEach((row, index) => {
-      if (index === 0) return;
-      const label = row.cells[0].querySelector('input').value;
-      const value = parseFloat(row.cells[1].querySelector('input').value);
-      if (label && !isNaN(value)) {
-        labels.push(label);
-        data.push(value);
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: '그래프 제목',
+            font: { size: 20 }
+          },
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+            // 👈 눈금 관련 옵션 제거 → 자동 설정되도록
+          }
+        }
       }
     });
 
-    const titleInput = document.getElementById('chartTitle').value || '그래프 제목';
+    function addRow() {
+      const table = document.getElementById('dataTable');
+      const row = table.insertRow();
+      row.innerHTML = `
+        <td><input type="text" placeholder="항목 이름" /></td>
+        <td><input type="number" /></td>
+        <td><button class="delete-button" onclick="deleteRow(this)">삭제</button></td>
+      `;
+    }
 
-    myChart.data.labels = labels;
-    myChart.data.datasets[0].data = data;
-    myChart.options.plugins.title.text = titleInput;
-    myChart.update();
-  }
+    function deleteRow(button) {
+      const row = button.parentElement.parentElement;
+      row.remove();
+    }
 
-  function saveChartImage() {
-    const canvas = document.getElementById('myChart');
-    const padding = 40; // ✅ 여백 추가 (픽셀 기준)
+    function updateChart() {
+      const rows = document.querySelectorAll('#dataTable tr');
+      const labels = [];
+      const data = [];
 
-    const tempCanvas = document.createElement('canvas');
-    const tempCtx = tempCanvas.getContext('2d');
-    tempCanvas.width = canvas.width + padding * 2;
-    tempCanvas.height = canvas.height + padding * 2;
+      rows.forEach((row, index) => {
+        if (index === 0) return;
+        const label = row.cells[0].querySelector('input').value;
+        const value = parseFloat(row.cells[1].querySelector('input').value);
+        if (label && !isNaN(value)) {
+          labels.push(label);
+          data.push(value);
+        }
+      });
 
-    tempCtx.fillStyle = '#ffffff';
-    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      const titleInput = document.getElementById('chartTitle').value || '그래프 제목';
 
-    tempCtx.drawImage(canvas, padding, padding); // ✅ 여백 위치에 그림
+      myChart.data.labels = labels;
+      myChart.data.datasets[0].data = data;
+      myChart.options.plugins.title.text = titleInput;
 
-    const link = document.createElement('a');
-    const title = document.getElementById('chartTitle').value.trim() || 'chart';
-    link.download = `${title}.png`;
-    link.href = tempCanvas.toDataURL('image/png');
-    link.click();
-  }
-</script>
+      myChart.update();
+    }
+
+    function saveChartImage() {
+      const canvas = document.getElementById('myChart');
+      const rect = canvas.getBoundingClientRect();
+      const padding = 40;
+
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCanvas.width = rect.width + padding * 2;
+      tempCanvas.height = rect.height + padding * 2;
+
+      tempCtx.fillStyle = '#ffffff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(canvas, padding, padding, rect.width, rect.height);
+
+      const link = document.createElement('a');
+      const title = document.getElementById('chartTitle').value.trim() || 'chart';
+      link.download = `${title}.png`;
+      link.href = tempCanvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
 </body>
 </html>
