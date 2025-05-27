@@ -181,12 +181,12 @@
       scales: {
         y: {
           beginAtZero: true,
+          suggestedMin: 0,
           ticks: {
             stepSize: 1,
             precision: 0,
-            callback: function (value) {
-              return Number.isInteger(value) ? value : '';
-            }
+            autoSkip: false,
+            callback: value => Number.isInteger(value) ? value : null
           }
         }
       }
